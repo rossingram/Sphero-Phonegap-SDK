@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>PhoneGap</title>
+    <script type="text/javascript" charset="utf-8" src="cordova-1.6.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="spheroplugin.js"></script>
+
+
+    <style type="text/css">
+
+        .action {
+            border: black solid 1px;
+            padding: 2px;
+            background-color: #aaf;
+        }
+
+
+    </style>
+
+    <script type="text/javascript">
+
+
+        //Blinking functionality
+        var mBlinkOn = false;
+        var mBlinking = false;
+
+        function blink(){
+
+            if(mBlinking){
+                mBlinkOn = (!mBlinkOn);
+                var b = (mBlinkOn)?1.0:0.0;
+
+                mySphero.backLED(b);
+
+                window.setTimeout(blink, 1000);
+
+                alert(b);
+            }
+        }
+
+        function backLedOn(){
+
+            mySphero.backLED(1);
+        }
+
+        function backLedOff(){
+
+            mySphero.backLED(0);
+        }
+
+        function startStreaming(){
+
+            mySphero.stream()
+                .withGyro()
+                .withListener(function(data){
+
+                        var x = data.gyro_filtered[0];
+                        var y = data.gyro_filtered[1];
+                        var z = data.gyro_filtered[2];
+
+                        console.log("x:"+x+", y:"+y+", z:"+z);
+                    })
+                .start();
+        }
+
+        function turnColor(){
+
+            var red = document.getElementById("red").value;
+            var green = document.getElementById("green").value;
+            var blue = document.getElementById("blue").value;
+
+            mySphero.rgb(red, green, blue);
+        }
+
+    </script>
+</head>
+<body>
+
+    <p>
+        Red: <input type="text" id="red" value="0" /><br />
+        Green: <input type="text" id="green" value="0" /><br />
+        Blue: <input type="text" id="blue" value="0" /><br />
+    </p>
+
+    <p>
+        <a class="action" onclick="turnColor()">Turn Color</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="mySphero.rgb(0, 0, 255);">Turn Blue</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="mySphero.rgb(0, 0, 0);">Turn Black</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="backLedOn();">Back LED On</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="backLedOff();">Back LED Off</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="mySphero.roll(0, 1);">Drive</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="mySphero.roll(0, 0);">Stop</a>
+    </p>
+
+    <p>
+        <a class="action" onclick="startStreaming();">Start Streaming</a>
+    </p>
+</body>
+</html>

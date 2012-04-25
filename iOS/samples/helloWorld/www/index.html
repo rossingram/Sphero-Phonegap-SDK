@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title></title>
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+	<meta charset="utf-8">
+
+
+	<!-- iPad/iPhone specific css below, add after your main css >
+	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
+	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
+	-->
+	<script type="text/javascript" charset="utf-8" src="cordova-1.6.1.js"></script>
+    <script src="spheroGap.js"></script>
+    <script type="text/javascript">
+
+	function onBodyLoad()
+	{		
+		document.addEventListener("deviceready", onDeviceReady, false);
+	}
+
+	function onDeviceReady()
+	{
+        mySphero.setupRobot(["sphero"],function(result) { alert("You have Connected to Sphero"); },function(error) {} );
+        mySphero.rgb(["0.80","0.0","0.65"]);
+	}
+
+    </script>
+  </head>
+  <body onload="onBodyLoad()">
+	<h1>Hey, it's Sphero!</h1>
+      <font size="6">
+      <br><center>
+          <a onclick="mySphero.roll(['360','0.5']);">   0   </a><br><br>
+          <a onclick="mySphero.roll(['270','0.5']);">   270 <a> - 
+          <a onclick="mySphero.roll(['0','0.0']);">       X   </a> - 
+          <a onclick="mySphero.roll(['90','0.5'])">     90  </a><br><br>
+          <a onclick="mySphero.roll(['180','0.5']);">  180 </a><br><br></center>
+      <br />
+          <center>
+      <a onclick="mySphero.sleep(['sphero']);">Put Sphero to Sleep.</a></center>
+      </font>
+      
+      
+	<br />
+  </body>
+</html>
