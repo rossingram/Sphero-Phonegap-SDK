@@ -47,5 +47,9 @@
 	<string></string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<true/>
+	<key>UISupportedExternalAccessoryProtocols</key>
+	<array>
+		<string>com.orbotix.robotprotocol</string>
+	</array>
 </dict>
 </plist>
