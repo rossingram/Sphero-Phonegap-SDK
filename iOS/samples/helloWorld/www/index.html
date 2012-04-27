@@ -1,48 +1,73 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <title></title>
-  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
-	<meta charset="utf-8">
+  <title>Go Sphero!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no;" />
+  <meta charset="utf-8">
 
 
-	<!-- iPad/iPhone specific css below, add after your main css >
-	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
-	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
-	-->
-	<script type="text/javascript" charset="utf-8" src="cordova-1.6.1.js"></script>
-    <script src="spheroGap.js"></script>
-    <script type="text/javascript">
+  <script src="cordova-1.6.1.js"></script>
+  <script src="spheroGap.js"></script>
+  <script src="js/zepto.min.js"></script>
+  <script src="js/hammer.js"></script>
+  <script src="js/drive.js"></script>
+  <script>
 
-	function onBodyLoad()
-	{		
-		document.addEventListener("deviceready", onDeviceReady, false);
-	}
+    function onBodyLoad(){
+      document.addEventListener("deviceready", onDeviceReady, false);
+    }
 
-	function onDeviceReady()
-	{
-        mySphero.setupRobot(["sphero"],function(result) { alert("You have Connected to Sphero"); },function(error) {} );
-        mySphero.rgb(["0.80","0.0","0.65"]);
-	}
+    // Start the party
+    function onDeviceReady(){
+      new Drive();
+    }
 
-    </script>
-  </head>
+  </script>
+
+  <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+  <link href='css/style.css' rel='stylesheet' type='text/css'>
+</head>
+
   <body onload="onBodyLoad()">
-	<h1>Hey, it's Sphero!</h1>
-      <font size="6">
-      <br><center>
-          <a onclick="mySphero.roll(['360','0.5']);">   0   </a><br><br>
-          <a onclick="mySphero.roll(['270','0.5']);">   270 <a> - 
-          <a onclick="mySphero.roll(['0','0.0']);">       X   </a> - 
-          <a onclick="mySphero.roll(['90','0.5'])">     90  </a><br><br>
-          <a onclick="mySphero.roll(['180','0.5']);">  180 </a><br><br></center>
-      <br />
-          <center>
-      <a onclick="mySphero.sleep(['sphero']);">Put Sphero to Sleep.</a></center>
-      </font>
-      
-      
-	<br />
+
+    <div id="main">
+      <div id="notice"></div>
+      <h1>GO SPHERO!</h1>
+
+      <div class="drag-area">
+
+        <span id="controller"></span>
+
+      </div>
+
+      <span class="toggle-controls">&#9881;</span>
+
+      <!-- <a onclick="mySphero.sleep(['sphero']);">Put Sphero to Sleep.</a> -->
+
+      <!-- <a onclick="mySphero.backLED(['0.9']);">BACK LED</a> -->
+    </div>
+    <div class="controls">
+      <span class="sleep">Sleep</span>
+
+      <label>Speed</label>
+      <input type="range" id="speed" value="5" min="1" max="10"/>
+
+      <fieldset class="color-control">
+        <label>R</label>
+        <input type="range" id="red" value="80" min="0" max="255"/>
+
+        <label>G</label>
+        <input type="range" id="green"value="0" min="0" max="255"/>
+
+        <label>B</label>
+        <input type="range" id="blue" value="220" min="0" max="255"/>
+
+        <span id="sphero"></span>
+      <fieldset>
+    </div>
+
+    <span id="aim-l"></span>
+    <span id="aim-r"></span>
+
   </body>
 </html>
