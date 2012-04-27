@@ -21,7 +21,11 @@
 	<key>OpenAllWhitelistURLsInWebView</key>
 	<false/>
 	<key>ExternalHosts</key>
-	<array/>
+	<array>
+		<string>app.gosphero.com</string>
+		<string>fonts.googleapis.com</string>
+		<string>themes.googleusercontent.com</string>
+	</array>
 	<key>Plugins</key>
 	<dict>
 		<key>sphero</key>
