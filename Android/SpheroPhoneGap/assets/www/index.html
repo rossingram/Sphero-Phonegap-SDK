@@ -2,8 +2,10 @@
 <html>
 <head>
     <title>PhoneGap</title>
+
     <script type="text/javascript" charset="utf-8" src="cordova-1.6.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="spheroplugin.js"></script>
+    <script type="text/javascript" charset="utf-8" src="tquery-all.js"></script>
 
 
     <style type="text/css">
@@ -12,6 +14,8 @@
             border: black solid 1px;
             padding: 2px;
             background-color: #aaf;
+            display: inline-block;
+            margin: 5px;
         }
 
 
@@ -20,47 +24,57 @@
     <script type="text/javascript">
 
 
-        //Blinking functionality
-        var mBlinkOn = false;
-        var mBlinking = false;
 
-        function blink(){
-
-            if(mBlinking){
-                mBlinkOn = (!mBlinkOn);
-                var b = (mBlinkOn)?1.0:0.0;
-
-                mySphero.backLED(b);
-
-                window.setTimeout(blink, 1000);
-
-                alert(b);
-            }
-        }
-
-        function backLedOn(){
-
-            mySphero.backLED(1);
-        }
-
-        function backLedOff(){
-
-            mySphero.backLED(0);
-        }
 
         function startStreaming(){
 
+            //Hold the ball in place
+            mySphero.stabilization(false);
+            mySphero.backLED(1);
+
             mySphero.stream()
                 .withGyro()
+                .withAttitude()
+                .withAccelerometerXFiltered()
+                .withAccelerometerYFiltered()
+                .withAccelerometerZFiltered()
                 .withListener(function(data){
 
-                        var x = data.gyro_filtered[0];
-                        var y = data.gyro_filtered[1];
-                        var z = data.gyro_filtered[2];
+                        //show attitude data
+                        if(data.attitude){
+                            var d = data.attitude;
+                            document.getElementById("roll").innerHTML = d.roll;
+                            document.getElementById("pitch").innerHTML = d.pitch;
+                            document.getElementById("yaw").innerHTML = d.yaw;
+                        }
 
-                        console.log("x:"+x+", y:"+y+", z:"+z);
+                        //show gyro data
+                        if(data.gyro.filtered){
+                            var d = data.gyro.filtered;
+                            document.getElementById("gyro_x").innerHTML = d.x;
+                            document.getElementById("gyro_y").innerHTML = d.y;
+                            document.getElementById("gyro_z").innerHTML = d.z;
+                        }
+
+                        //show accelerometer data
+                        if(data.accelerometer.filtered){
+                            var d = data.accelerometer.filtered;
+                            document.getElementById("accelerometer_x").innerHTML = d.x;
+                            document.getElementById("accelerometer_y").innerHTML = d.y;
+                            document.getElementById("accelerometer_z").innerHTML = d.z;
+                        }
                     })
                 .start();
+        }
+
+        function stopStreaming(){
+
+            //Stop streaming
+            mySphero.stopStreaming();
+
+            //Release the ball
+            mySphero.stabilization(true);
+            mySphero.backLED(0);
         }
 
         function turnColor(){
@@ -72,46 +86,65 @@
             mySphero.rgb(red, green, blue);
         }
 
+        function showObject(){
+            var world = tQuery.createWorld().boilerplate().start();
+            var object = tQuery.createTorus().addTo(world);
+        }
+
     </script>
 </head>
-<body>
-
-    <p>
+<body onload="showObject()">
+    <div style="float:left; width: 200px">
         Red: <input type="text" id="red" value="0" /><br />
         Green: <input type="text" id="green" value="0" /><br />
         Blue: <input type="text" id="blue" value="0" /><br />
-    </p>
+    </div>
 
-    <p>
+    <div style="float:left">
+        Attitude:
+        <ul>
+            <li>Roll: <span id="roll"></span></li>
+            <li>Pitch: <span id="pitch"></span></li>
+            <li>Yaw: <span id="yaw"></span></li>
+        </ul>
+
+        Gyro:
+        <ul>
+            <li>X: <span id="gyro_x"></span></li>
+            <li>Y: <span id="gyro_y"></span></li>
+            <li>Z: <span id="gyro_z"></span></li>
+        </ul>
+        Accelerometer:
+        <ul>
+            <li>X: <span id="accelerometer_x"></span></li>
+            <li>Y: <span id="accelerometer_y"></span></li>
+            <li>Z: <span id="accelerometer_z"></span></li>
+        </ul>
+    </div>
+
+    <hr style="clear:both" />
+
+    <div>
         <a class="action" onclick="turnColor()">Turn Color</a>
-    </p>
 
-    <p>
         <a class="action" onclick="mySphero.rgb(0, 0, 255);">Turn Blue</a>
-    </p>
 
-    <p>
         <a class="action" onclick="mySphero.rgb(0, 0, 0);">Turn Black</a>
-    </p>
 
-    <p>
-        <a class="action" onclick="backLedOn();">Back LED On</a>
-    </p>
+        <a class="action" onclick="mySphero.backLED(1);">Back LED On</a>
 
-    <p>
-        <a class="action" onclick="backLedOff();">Back LED Off</a>
-    </p>
+        <a class="action" onclick="mySphero.backLED(0);">Back LED Off</a>
 
-    <p>
         <a class="action" onclick="mySphero.roll(0, 1);">Drive</a>
-    </p>
 
-    <p>
         <a class="action" onclick="mySphero.roll(0, 0);">Stop</a>
-    </p>
 
-    <p>
         <a class="action" onclick="startStreaming();">Start Streaming</a>
-    </p>
+
+        <a class="action" onclick="stopStreaming();">Stop Streaming</a>
+
+        <a href="rotate_object.html" class="action">Rotate Object --></a>
+
+    </div>
 </body>
 </html>

@@ -3,8 +3,7 @@ package com.orbotix.phonegap;
 import android.util.Log;
 import com.phonegap.api.Plugin;
 import orbotix.robot.base.*;
-import orbotix.robot.sensor.DeviceSensorsData;
-import orbotix.robot.sensor.GyroData;
+import orbotix.robot.sensor.*;
 import org.apache.cordova.api.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +23,7 @@ public class SpheroPlugin extends Plugin {
 
     private final static String sCommand              = "COMMAND";
     private final static String sStartStreaming       = "START_STREAMING";
+    private final static String sStopStreaming        = "STOP_STREAMING";
     
     private String mStreamingCallbackId = "";
     
@@ -105,6 +105,23 @@ public class SpheroPlugin extends Plugin {
                     result.setKeepCallback(true);
                     return result;
                 }
+            }else if(action.equals(sStopStreaming)){
+
+                if(mAsyncDataListener != null){
+
+                    DeviceMessenger.getInstance().removeAsyncDataListener(robot, mAsyncDataListener);
+
+                    mAsyncDataListener = null;
+
+                    SetDataStreamingCommand.sendCommand(robot, 0, 0, SetDataStreamingCommand.DATA_STREAMING_MASK_OFF, 0);
+
+                    //Send no result with the streaming callback id to clear the callback
+                    success(new PluginResult(PluginResult.Status.NO_RESULT), mStreamingCallbackId);
+
+                    mStreamingCallbackId = null;
+
+                    return new PluginResult(PluginResult.Status.OK);
+                }
             }
         }
 
@@ -120,32 +137,94 @@ public class SpheroPlugin extends Plugin {
             if(sensor_data != null){
                 for(DeviceSensorsData d : sensor_data){
 
-                    //Gyro data
-                    GyroData gyro = d.getGyroData();
-                    if(gyro != null){
+                    JSONObject o   = new JSONObject();
 
-                        JSONObject o   = new JSONObject();
-                        JSONArray rate = new JSONArray();
-                        rate.put(gyro.getRotationRateFiltered().x);
-                        rate.put(gyro.getRotationRateFiltered().y);
-                        rate.put(gyro.getRotationRateFiltered().z);
-
-                        try {
-                            o.put("gyro_filtered", rate);
-
-
-                            PluginResult result = new PluginResult(PluginResult.Status.OK, o);
-                            result.setKeepCallback(true);
-                            success(result, mStreamingCallbackId);
-
-
-                        } catch (JSONException e) {
-                            Log.e(TAG, "Failed to put filtered rotation rate.", e);
-                        }
+                    try {
+                        fillGyroData(d, o);
+                        fillAccelerometerData(d, o);
+                        fillAttitudeData(d, o);
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Failed to put streaming data into json.", e);
                     }
+
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, o);
+                    result.setKeepCallback(true);
+                    success(result, mStreamingCallbackId);
                 }
             }
 
+        }
+    }
+
+    private void fillGyroData(DeviceSensorsData data, JSONObject o) throws JSONException {
+
+        GyroData d = data.getGyroData();
+
+        if(d != null){
+            JSONObject gyro_obj = new JSONObject();
+
+            JSONObject filtered = new JSONObject();
+            filtered.put("x", d.getRotationRateFiltered().x);
+            filtered.put("y", d.getRotationRateFiltered().y);
+            filtered.put("z", d.getRotationRateFiltered().z);
+
+            JSONObject raw = new JSONObject();
+            raw.put("x", d.getRotationRateRaw().x);
+            raw.put("y", d.getRotationRateRaw().y);
+            raw.put("z", d.getRotationRateRaw().z);
+
+            gyro_obj.put("filtered", filtered);
+            gyro_obj.put("raw", raw);
+
+            o.put("gyro", gyro_obj);
+        }
+    }
+
+    private void fillAccelerometerData(DeviceSensorsData data, JSONObject o) throws JSONException {
+
+        AccelerometerData d = data.getAccelerometerData();
+
+        if(d != null){
+            JSONObject accel_obj = new JSONObject();
+
+            JSONObject filtered = new JSONObject();
+            filtered.put("x", d.getFilteredAcceleration().x);
+            filtered.put("y", d.getFilteredAcceleration().y);
+            filtered.put("z", d.getFilteredAcceleration().z);
+
+            JSONObject raw = new JSONObject();
+            raw.put("x", d.getRawAcceleration().x);
+            raw.put("y", d.getRawAcceleration().y);
+            raw.put("z", d.getRawAcceleration().z);
+
+            accel_obj.put("filtered", filtered);
+            accel_obj.put("raw", raw);
+
+            o.put("accelerometer", accel_obj);
+        }
+    }
+
+    private void fillAttitudeData(DeviceSensorsData data, JSONObject o) throws JSONException {
+
+        AttitudeData d = data.getAttitudeData();
+
+        if(d != null){
+            JSONObject attitude_obj = new JSONObject();
+
+            attitude_obj.put("roll", d.getAttitudeSensor().roll);
+            attitude_obj.put("pitch", d.getAttitudeSensor().pitch);
+            attitude_obj.put("yaw", d.getAttitudeSensor().yaw);
+
+            o.put("attitude", attitude_obj);
+        }
+    }
+
+    private void fillMagnetometerData(DeviceSensorsData data, JSONObject o) throws JSONException {
+
+        MagnetometerData d = data.getMagnetometerData();
+
+        if(d != null){
+            JSONObject magnet = new JSONObject();
         }
     }
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>PhoneGap</title>
+
+    <script type="text/javascript" charset="utf-8" src="cordova-1.6.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="spheroplugin.js"></script>
+    <script type="text/javascript" charset="utf-8" src="Three.js"></script>
+
+
+    <style type="text/css">
+
+        .action {
+            border: black solid 1px;
+            padding: 2px;
+            background-color: #aaf;
+            display: inline-block;
+            margin: 5px;
+        }
+
+
+    </style>
+
+    <script type="text/javascript">
+
+        var roll  = 0;
+        var pitch = 0;
+        var yaw   = 0;
+
+        function startStreaming(){
+
+            //Hold the ball in place
+            mySphero.stabilization(false);
+            mySphero.backLED(1);
+
+            mySphero.stream()
+                    .withGyro()
+                    .withAttitude()
+                    .withDivisor(50)
+                    .withAccelerometerXFiltered()
+                    .withAccelerometerYFiltered()
+                    .withAccelerometerZFiltered()
+                    .withListener(function(data){
+
+                        //move the object
+                        if(data.attitude){
+                            var d = data.attitude;
+                            roll = d.roll;
+                            pitch = d.pitch;
+                            yaw = d.yaw;
+                        }
+                    })
+                    .start();
+        }
+
+        function stopStreaming(){
+
+            //Stop streaming
+            mySphero.stopStreaming();
+
+            //Release the ball
+            mySphero.stabilization(true);
+            mySphero.backLED(0);
+        }
+
+        function showCube(){
+
+            var camera, scene, renderer,
+                    geometry, material, mesh;
+
+            init();
+            animate();
+
+            function init() {
+
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+                camera.position.z = 1000;
+                scene.add( camera );
+
+                geometry = new THREE.CubeGeometry( 200, 200, 200 );
+                material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+
+                mesh = new THREE.Mesh( geometry, material );
+                scene.add( mesh );
+
+                renderer = new THREE.CanvasRenderer();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+                document.body.appendChild( renderer.domElement );
+
+            }
+
+            function animate() {
+
+                // note: three.js includes requestAnimationFrame shim
+                requestAnimationFrame( animate );
+                render();
+
+            }
+
+            function render() {
+
+                function correct(n){
+                    if(n < 0){
+                        n += 359;
+                    }
+                    n = n * Math.PI / 180;
+                    return n;
+                }
+
+                var y = correct(yaw);
+                var r = correct(roll);
+                var p = correct(pitch);
+
+                mesh.rotation.x = p;
+                mesh.rotation.y = r;
+                mesh.rotation.z = y;
+
+
+
+                renderer.render( scene, camera );
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div>
+        <a href="index.html" class="action"><-- Go Back</a>
+
+        <a class="action" onclick="showCube();">Show Cube</a>
+
+        <a class="action" onclick="startStreaming();">Start Streaming</a>
+
+        <a class="action" onclick="stopStreaming();">Stop Streaming</a>
+
+    </div>
+</body>
+</html>

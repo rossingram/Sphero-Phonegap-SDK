@@ -27,7 +27,6 @@ SpheroPlugin.prototype.backLED = function(brightness, success, fail){
 SpheroPlugin.prototype.stabilization = function(state, success, fail){
 
     //state is a bool
-
     success = (success)?success:function(){};
     fail    = (fail)?fail:function(){};
 
@@ -107,6 +106,10 @@ SpheroPlugin.prototype.stream = function(){
     return new StreamingConfig(this);
 };
 
+SpheroPlugin.prototype.stopStreaming = function(success, fail){
+
+    return cordova.exec(success, fail, "SpheroPlugin", "STOP_STREAMING", []);
+};
 
 
 /**
@@ -236,6 +239,77 @@ StreamingConfig.prototype.withGyro = function(){
                 .withGyroXRaw()
                 .withGyroYRaw()
                 .withGyroZRaw();
+};
+
+StreamingConfig.prototype.withAccelerometerXFiltered = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_X_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometerYFiltered = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_Y_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometerZFiltered = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_Z_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometerXRaw = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_X_RAW);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometerYRaw = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_Y_RAW);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometerZRaw = function(){
+
+    this.addMask(this.masks.ACCELEROMETER_Z_RAW);
+    return this;
+};
+
+StreamingConfig.prototype.withAccelerometer = function(){
+
+    return this.withAccelerometerXFiltered()
+        .withAccelerometerYFiltered()
+        .withAccelerometerZFiltered()
+        .withAccelerometerXRaw()
+        .withAccelerometerYRaw()
+        .withAccelerometerZRaw();
+};
+
+StreamingConfig.prototype.withRoll = function(){
+
+    this.addMask(this.masks.IMU_ROLL_ANGLE_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withPitch = function(){
+
+    this.addMask(this.masks.IMU_PITCH_ANGLE_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withYaw = function(){
+
+    this.addMask(this.masks.IMU_YAW_ANGLE_FILTERED);
+    return this;
+};
+
+StreamingConfig.prototype.withAttitude = function(){
+
+    return this.withRoll()
+        .withPitch()
+        .withYaw();
 };
 
 StreamingConfig.prototype.addMask = function(mask){
