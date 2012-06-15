@@ -178,7 +178,7 @@ var mySphero = {
     /*************************************************************************************
      + (void) sendCommandWithState:		(RKStabilizationState) 	state	
      
-     This class is used to turn of the control system on Sphero which stabilizes it.
+     This class is used to turn off the control system on Sphero which stabilizes it.
      
      Parameters:
      state	The new state for the control system stabilization. 0 = Off, 1 = On
