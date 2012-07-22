@@ -4,7 +4,7 @@
 
 First, follow the directions in the PhoneGap "Getting Started" guide, at http://phonegap.com/start#android to install the Cordova JavaScript and Java libraries, and to configure your project for Cordova (aka PhoneGap).
 
-Get the Sphero Android SDK at https://github.com/OrbotixInc/MOBILE-ANDROID-SDK and follow the directions in the readme to add RobotLibrary and RobotUILibrary to your project.
+Get the Sphero Android SDK at https://github.com/Orbotix/SPHERO-ANDROID-SDK and follow the directions in the readme to add RobotLibrary and RobotUILibrary to your project.
 
 After RobotLibrary and RobotUILibrary are in your project's build path, add the line:
 
@@ -12,7 +12,7 @@ After RobotLibrary and RobotUILibrary are in your project's build path, add the 
 
 to your project manifest. This will allow the StartupActivity to run, which is needed to connect to the Sphero.
 
-Download the Sphero Cordova plugin for Android at https://github.com/Orbotix/MOBILE-PHONEGAP-SDK
+Download the Sphero Cordova plugin for Android at https://github.com/Orbotix/SPHERO-PHONEGAP-SDK
 
 Place the spheroplugin.js file into your assets/www folder, and place the SpheroPlugin.java file into your project's source folder.
 
