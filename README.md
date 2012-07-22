@@ -12,7 +12,7 @@ After RobotLibrary and RobotUILibrary are in your project's build path, add the 
 
 to your project manifest. This will allow the StartupActivity to run, which is needed to connect to the Sphero.
 
-Download the Sphero Cordova plugin for Android at https://github.com/OrbotixInc/MOBILE-PHONEGAP-SDK
+Download the Sphero Cordova plugin for Android at https://github.com/Orbotix/MOBILE-PHONEGAP-SDK
 
 Place the spheroplugin.js file into your assets/www folder, and place the SpheroPlugin.java file into your project's source folder.
 
